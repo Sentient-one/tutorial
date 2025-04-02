@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Create sample data - you can replace this with your actual data
+
 months = range(1, 13)
 product1_sales = [4500, 4700, 4300, 4800, 4600, 5000, 5200, 5100, 4800, 5300, 5500, 5700]
 product2_sales = [3800, 3600, 3900, 4100, 4300, 4500, 4700, 4600, 4400, 4800, 5000, 5200]
@@ -20,29 +20,23 @@ plt.plot(months, product3_sales, color='red', linestyle='-.', marker='^', linewi
 plt.xlabel('Month', fontsize=12)
 plt.ylabel('Sales', fontsize=12)
 plt.title('Monthly Sales Comparison of Multiple Products', fontsize=14)
-
-# Add legend
 plt.legend(loc='best', fontsize=10)
 
-# Customize x-axis ticks
+
 plt.xticks(months)
 
-# Add grid for better readability
-plt.grid(True, linestyle='--', alpha=0.7)
 
-# Add text annotation to highlight important point
+plt.grid(True, linestyle='--', alpha=0.7)
 max_product1_month = months[product1_sales.index(max(product1_sales))]
 max_product1_sales = max(product1_sales)
 plt.annotate(f'Peak: {max_product1_sales}', 
              xy=(max_product1_month, max_product1_sales),
              xytext=(max_product1_month-0.5, max_product1_sales+200),
              arrowprops=dict(facecolor='black', shrink=0.05, width=1.5))
-
-# Set y-axis limits with some padding
 plt.ylim(min(min(product1_sales), min(product2_sales), min(product3_sales))-200, 
          max(max(product1_sales), max(product2_sales), max(product3_sales))+300)
 
-# Display the plot
+
 plt.tight_layout()
 plt.savefig('multi_line_plot.png')
 plt.show()
