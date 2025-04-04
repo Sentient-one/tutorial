@@ -1,27 +1,32 @@
-import tkinter as tk
-from tkinter import messagebox
+from breezypythongui import EasyFrame
 import math
 
-def compute_sqrt():
-    try:
-        num = int(entry.get()) 
-        if num < 0:
-            raise ValueError("Cannot compute square root of a negative number.")
-        sqrt_result = math.sqrt(num)
-        result_label.config(text=f"Square Root: {sqrt_result:.2f}")
-    except ValueError:
-        messagebox.showerror("Input Error", "Please enter a valid non-negative integer.")
+class SquareRootCalculator(EasyFrame):
+    def __init__(self):
+        EasyFrame.__init__(self, title="Square Root Calculator")
+        
+        self.setSize(400, 200)
 
+        self.addLabel(text="Enter an Integer:", row=0, column=0)
+        self.inputField = self.addIntegerField(value="", row=0, column=1, width=10)
 
-root = tk.Tk()
-root.title("Square Root Calculator")
+        self.addLabel(text="Square Root:", row=1, column=0)
+        self.outputField = self.addFloatField(value=0.0, row=1, column=1, width=10, state="readonly")
 
-tk.Label(root, text="Enter an integer:").grid(row=0, column=0, padx=10, pady=10)
-entry = tk.Entry(root)
-entry.grid(row=0, column=1, padx=10, pady=10)
+        self.addButton(text="Calculate", row=2, column=0, columnspan=2, command=self.computeSqrt)
 
-compute_btn = tk.Button(root, text="Compute √", command=compute_sqrt)
-compute_btn.grid(row=1, column=0, columnspan=2, pady=10)
-result_label = tk.Label(root, text="Square Root: ")
-result_label.grid(row=2, column=0, columnspan=2, pady=10)
-root.mainloop()
+    def computeSqrt(self):
+        
+        try:
+            number = self.inputField.getNumber()
+            if number < 0:
+                raise ValueError 
+
+            result = math.sqrt(number)  
+            self.outputField.setNumber(result)  
+
+        except ValueError:
+            self.messageBox(title="ERROR", message="Input must be an integer >= 0") 
+
+if __name__ == "__main__":
+    SquareRootCalculator().mainloop()

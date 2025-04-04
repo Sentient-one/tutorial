@@ -1,40 +1,34 @@
-import tkinter as tk
-from tkinter import messagebox
+from breezypythongui import EasyFrame
 import random
 
+class GuessingGame(EasyFrame):
+    def __init__(self):
+        EasyFrame.__init__(self, title="Guess the Number Game")
+        
+        self.setSize(400, 200)
 
-secret_number = random.randint(1, 100)
-attempts = 0
+        self.targetNumber = random.randint(1, 100)
+        self.attempts = 0
 
-def check_guess():
-    global attempts
-    guess = entry.get()
-    
-    if not guess.isdigit():
-        messagebox.showerror("Error", "Please enter a valid number!")
-        return
+        self.addLabel(text="Enter your guess (1-100):", row=0, column=0)
+        self.inputField = self.addIntegerField(value="", row=0, column=1, width=10)
 
-    guess = int(guess)
-    attempts += 1
+        self.resultLabel = self.addLabel(text="", row=1, column=0, columnspan=2)
 
-    if guess < secret_number:
-        result_label.config(text="Too small, try again!")
-    elif guess > secret_number:
-        result_label.config(text="Too large, try again!")
-    else:
-        messagebox.showinfo("Congratulations!", f"You guessed it in {attempts} attempts!")
-        root.destroy() 
+        self.addButton(text="Guess", row=2, column=0, columnspan=2, command=self.checkGuess)
 
+    def checkGuess(self):
+        
+        guess = self.inputField.getNumber()
+        self.attempts += 1
 
-root = tk.Tk()
-root.title("Guess the Number")
-
-tk.Label(root, text="Guess a number between 1 and 100:").pack(pady=5)
-entry = tk.Entry(root)
-entry.pack(pady=5)
-
-tk.Button(root, text="Submit Guess", command=check_guess).pack(pady=5)
-result_label = tk.Label(root, text="")
-result_label.pack(pady=5)
-
-root.mainloop()
+        if guess < self.targetNumber:
+            self.resultLabel["text"] = "Too small, try again."
+        elif guess > self.targetNumber:
+            self.resultLabel["text"] = "Too large, try again."
+        else:
+            self.resultLabel["text"] = f"Correct! You guessed it in {self.attempts} tries."
+            self.inputField["state"] = "disabled"
+            
+if __name__ == "__main__":
+    GuessingGame().mainloop()

@@ -1,66 +1,68 @@
-import tkinter as tk
-import random
+from breezypythongui import EasyFrame
 
-def new_game():
-    global low, high, attempts, computer_guess
-    low, high, attempts = 1, 100, 0
-    computer_guess = random.randint(low, high)
-    update_label()
-    enable_buttons()
+class ComputerGuessGame(EasyFrame):
+    def __init__(self):
+        """Initialize the GUI and game logic."""
+        EasyFrame.__init__(self, title="Computer Guessing Game")
+        self.setSize(400, 200)
 
-def update_label():
-    guess_label.config(text=f"My guess: {computer_guess}")
+        # Label to display computer's guess
+        self.addLabel(text="Computer's Guess:", row=0, column=0)
+        self.guessLabel = self.addLabel(text="", row=0, column=1)
 
-def too_small():
-    global low, computer_guess, attempts
-    low = computer_guess + 1
-    make_guess()
+        # Buttons for user feedback
+        self.smallerButton = self.addButton(text="Too Small", row=1, column=0, command=self.tooSmall)
+        self.largerButton = self.addButton(text="Too Large", row=1, column=1, command=self.tooLarge)
+        self.correctButton = self.addButton(text="Correct", row=2, column=0, columnspan=2, command=self.correctGuess)
 
-def too_large():
-    global high, computer_guess, attempts
-    high = computer_guess - 1
-    make_guess()
+        # New Game Button (initially disabled)
+        self.newGameButton = self.addButton(text="New Game", row=3, column=0, columnspan=2, command=self.newGame)
+        self.newGameButton["state"] = "disabled"
 
-def make_guess():
-    global computer_guess, attempts
-    attempts += 1
-    if low > high:
-        guess_label.config(text="Something went wrong!")
-        disable_buttons()
-    else:
-        computer_guess = random.randint(low, high)
-        update_label()
+        # Start the first game
+        self.newGame()
 
-def correct():
-    guess_label.config(text=f"I guessed it in {attempts} attempts! ")
-    disable_buttons()
+    def newGame(self):
+        """Start a new game by resetting values."""
+        self.low = 1
+        self.high = 100
+        self.attempts = 0
+        self.nextGuess()
 
-def disable_buttons():
-    too_small_btn.config(state=tk.DISABLED)
-    too_large_btn.config(state=tk.DISABLED)
-    correct_btn.config(state=tk.DISABLED)
+        # Enable buttons
+        self.smallerButton["state"] = "normal"
+        self.largerButton["state"] = "normal"
+        self.correctButton["state"] = "normal"
+        self.newGameButton["state"] = "disabled"
 
-def enable_buttons():
-    too_small_btn.config(state=tk.NORMAL)
-    too_large_btn.config(state=tk.NORMAL)
-    correct_btn.config(state=tk.NORMAL)
+    def nextGuess(self):
+        """Make the computer guess a new number."""
+        self.attempts += 1
+        self.computerGuess = (self.low + self.high) // 2  # Middle value
+        self.guessLabel["text"] = str(self.computerGuess)
 
+    def tooSmall(self):
+        """Adjust range when the guess is too small."""
+        self.low = self.computerGuess + 1
+        self.nextGuess()
 
-root = tk.Tk()
-root.title("Computer Guessing Game")
+    def tooLarge(self):
+        """Adjust range when the guess is too large."""
+        self.high = self.computerGuess - 1
+        self.nextGuess()
 
-guess_label = tk.Label(root, text="", font=("Arial", 14))
-guess_label.pack(pady=10)
+    def correctGuess(self):
+        """Handle the case where the computer guessed correctly."""
+        self.guessLabel["text"] = f"🎉 Got it in {self.attempts} tries!"
+        
+        # Disable buttons after correct guess
+        self.smallerButton["state"] = "disabled"
+        self.largerButton["state"] = "disabled"
+        self.correctButton["state"] = "disabled"
+        
+        # Enable "New Game" button
+        self.newGameButton["state"] = "normal"
 
-too_small_btn = tk.Button(root, text="Too Small", command=too_small)
-too_large_btn = tk.Button(root, text="Too Large", command=too_large)
-correct_btn = tk.Button(root, text="Correct", command=correct)
-new_game_btn = tk.Button(root, text="New Game", command=new_game)
-
-too_small_btn.pack(pady=5)
-too_large_btn.pack(pady=5)
-correct_btn.pack(pady=5)
-new_game_btn.pack(pady=10)
-
-new_game()
-root.mainloop()
+# Run the application
+if __name__ == "__main__":
+    ComputerGuessGame().mainloop()

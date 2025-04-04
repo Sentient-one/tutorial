@@ -1,47 +1,49 @@
-import tkinter as tk
-from tkinter import messagebox
+from breezypythongui import EasyFrame
 
-def calculate():
-    try:
-        h = float(height_entry.get())
-        b = float(bounce_entry.get())
-        n = int(bounces_entry.get())
-        
-        if h <= 0 or b <= 0 or n < 0 or b >= 1:
-            messagebox.showerror("Error", "Height and bounce must be positive, bounce < 1, bounces >= 0")
-            return
-            
-        total = h
-        current = h
-        for _ in range(n):
-            current *= b
-            total += current * 2
-            
-        result.config(text=f"Distance: {total:.2f}")
-        
-    except ValueError:
-        messagebox.showerror("Error", "Enter valid numbers")
+class BouncyBall(EasyFrame):
+    def __init__(self):
+        """Initialize the GUI components."""
+        EasyFrame.__init__(self, title="Bouncy Ball Calculator")
+        self.setSize(400, 250)
 
-# Window setup
-root = tk.Tk()
-root.title("Ball Distance")
-root.geometry("200x200")
+        # Labels and input fields
+        self.addLabel(text="Initial Height (meters):", row=0, column=0)
+        self.heightField = self.addFloatField(value="", row=0, column=1, width=10)
 
-# Widgets
-tk.Label(root, text="Height:").pack()
-height_entry = tk.Entry(root)
-height_entry.pack()
+        self.addLabel(text="Bounciness Index (0-1):", row=1, column=0)
+        self.bouncinessField = self.addFloatField(value="", row=1, column=1, width=10)
 
-tk.Label(root, text="Bounce (0-1):").pack()
-bounce_entry = tk.Entry(root)
-bounce_entry.pack()
+        self.addLabel(text="Number of Bounces:", row=2, column=0)
+        self.bouncesField = self.addIntegerField(value="", row=2, column=1, width=10)
 
-tk.Label(root, text="Bounces:").pack()
-bounces_entry = tk.Entry(root)
-bounces_entry.pack()
+        # Compute button
+        self.addButton(text="Compute Distance", row=3, column=0, columnspan=2, command=self.computeDistance)
 
-tk.Button(root, text="Calculate", command=calculate).pack(pady=10)
-result = tk.Label(root, text="Distance: ")
-result.pack()
+        # Output label
+        self.resultLabel = self.addLabel(text="Total Distance: 0.0 meters", row=4, column=0, columnspan=2)
 
-root.mainloop()
+    def computeDistance(self):
+        """Calculate the total distance traveled by the bouncing ball."""
+        try:
+            height = self.heightField.getNumber()
+            bounciness = self.bouncinessField.getNumber()
+            bounces = self.bouncesField.getNumber()
+
+            # Validate inputs
+            if height <= 0 or not (0 < bounciness < 1) or bounces < 0:
+                raise ValueError
+
+            total_distance = height  # First drop
+            for _ in range(bounces):
+                height *= bounciness
+                total_distance += 2 * height  # Up and down movement
+
+            # Display result
+            self.resultLabel["text"] = f"Total Distance: {total_distance:.2f} meters"
+
+        except ValueError:
+            self.messageBox(title="ERROR", message="Invalid input! Please enter valid values.")
+
+# Run the application
+if __name__ == "__main__":
+    BouncyBall().mainloop()
