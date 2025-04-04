@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Create DataFrames
+
 df1 = pd.DataFrame({'Month': ['Jan', 'Feb'], 'Sales': [1000, 1200]})
 df2 = pd.DataFrame({'Month': ['Jan', 'Feb'], 'Sales': [1100, 1300]})
 
